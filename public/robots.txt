@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://www.sorbannaga.com
+
+# Sitemaps
+Sitemap: https://www.sorbannaga.com/sitemap.xml
