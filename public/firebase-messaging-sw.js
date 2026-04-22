@@ -6,7 +6,7 @@ importScripts(
 );
 // // Initialize the Firebase app in the service worker by passing the generated config
 const firebaseConfig = {
-  apiKey: "AIzaSyCynsztDE5kylPmn1hOtNB1PGQ3LsRTxms",
+  apiKey: "AIzaSyDvNnN7mkuYSRzvVEQIH_3w1JpRFnSXnZc",
   authDomain: "sorbannaga-99.firebaseapp.com",
   projectId: "sorbannaga-99",
   storageBucket: "sorbannaga-99.appspot.com",
