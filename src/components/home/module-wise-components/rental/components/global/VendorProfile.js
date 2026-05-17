@@ -18,6 +18,8 @@ import { toast } from "react-hot-toast";
 import { t } from "i18next";
 import { not_logged_in_message } from "utils/toasterMessages";
 import { useGetWishList } from "components/home/module-wise-components/rental/rental-api-manage/hooks/react-query/wishlist/useGetWishlist";
+import VerifiedStoreBadge from "components/cards/VerifiedStoreBadge";
+import { Stack } from "@mui/system";
 
 const VendorProfile = ({ vehicleDetails }) => {
   const dispatch = useDispatch();
@@ -114,20 +116,29 @@ const VendorProfile = ({ vehicleDetails }) => {
             />
           </Box>
           <Box sx={{ maxWidth: "150px" }}>
-            <Typography
-              sx={{
-                fontSize: "13px",
-                fontWeight: "500",
-                textTransform: "capitalize",
-                display: "-webkit-box",
-                WebkitLineClamp: 1,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            >
-              {vehicleDetails?.provider?.name}
-            </Typography>
+            <Stack direction="row" alignItems="center" spacing={0.5}>
+              <Typography
+                sx={{
+                  fontSize: "13px",
+                  fontWeight: "500",
+                  textTransform: "capitalize",
+                  display: "-webkit-box",
+                  WebkitLineClamp: 1,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {vehicleDetails?.provider?.name}
+              </Typography>
+              <VerifiedStoreBadge
+                verified={
+                  vehicleDetails?.provider?.verified_seller ??
+                  vehicleDetails?.verified_seller
+                }
+                fontSize="14px"
+              />
+            </Stack>
 
             <Typography
               sx={{

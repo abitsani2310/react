@@ -3,7 +3,8 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { alpha, styled, Typography } from "@mui/material";
 import { handleStoreRedirect } from "helper-functions/handleStoreRedirect";
 
-import { Box } from "@mui/system";
+import { Box, Stack } from "@mui/system";
+import VerifiedStoreBadge from "components/cards/VerifiedStoreBadge";
 import { useAddStoreToWishlist } from "api-manage/hooks/react-query/wish-list/useAddStoreToWishLists";
 import { useWishListStoreDelete } from "api-manage/hooks/react-query/wish-list/useWishListStoreDelete";
 import { DistanceCalculate } from "helper-functions/DistanceCalculate";
@@ -223,8 +224,20 @@ const NearbyStoreCard = (props) => {
             )}
           </CustomStackFullWidth>
         </CustomStackFullWidth>
-        {isEllipsed ? (
-          <PrimaryToolTip text={item?.name} placement="bottom" arrow="false">
+        <Stack direction="row" alignItems="center" spacing={0.5}>
+          {isEllipsed ? (
+            <PrimaryToolTip text={item?.name} placement="bottom" arrow="false">
+              <Typography
+                ref={textRef}
+                className={classes.singleLineEllipsis}
+                fontSize={{ xs: "13px", md: "16px" }}
+                fontWeight="500"
+                component="h3"
+              >
+                {item?.name}
+              </Typography>
+            </PrimaryToolTip>
+          ) : (
             <Typography
               ref={textRef}
               className={classes.singleLineEllipsis}
@@ -234,18 +247,9 @@ const NearbyStoreCard = (props) => {
             >
               {item?.name}
             </Typography>
-          </PrimaryToolTip>
-        ) : (
-          <Typography
-            ref={textRef}
-            className={classes.singleLineEllipsis}
-            fontSize={{ xs: "13px", md: "16px" }}
-            fontWeight="500"
-            component="h3"
-          >
-            {item?.name}
-          </Typography>
-        )}
+          )}
+          <VerifiedStoreBadge verified={item?.verified_seller} fontSize="16px" />
+        </Stack>
         {/*<H3 text={item?.name} />*/}
         <Typography
           textAlign="flex-start"

@@ -6,12 +6,14 @@ import VehicleCategories from "components/home/module-wise-components/rental/com
 import CouponsCarousel from "components/home/module-wise-components/rental/components/home/CouponsCarousel";
 import DownloadSection from "components/home/module-wise-components/rental/components/home/DownloadSection";
 import { getToken } from "helper-functions/getToken";
+import TrendingBites from "components/home/trending-bites";
 
 const Rental = ({ configData, landingPageData }) => {
   return (
     <RentalModuleWrap>
       <CustomContainer>
         <RentalBanner />
+        <TrendingBites title="Trending Bites" />
         <TopRatedVehicles />
         <VehicleCategories />
         {getToken() && <CouponsCarousel />}

@@ -54,7 +54,8 @@ const RentalCartPage = () => {
   const isShowDiscount = calculateProviderWiseDiscounts > calculateTotalDiscount(cartList, tripCost)
   const finalDiscount = calculateProviderWiseDiscounts > calculateTotalDiscount(cartList, tripCost) ? calculateProviderWiseDiscounts : calculateTotalDiscount(cartList, tripCost)
   const discountDifference = calculateProviderWiseDiscounts === 0 || calculateTotalDiscount(cartList, tripCost) === 0 ? 0 : Math.abs(calculateProviderWiseDiscounts - calculateTotalDiscount(cartList, tripCost));
-
+ console.log("vvv",cartList);
+ 
   return (
     <>
       <CustomContainer>
@@ -78,7 +79,7 @@ const RentalCartPage = () => {
                 <Box sx={{ textAlign: "center" }}>
                   {cartList?.carts?.length > 0 && (
                     <Link
-                      href={`/rental/provider-details/${cartList?.carts[0].provider?.id}`}
+                      href={`/rental/provider/${cartList?.carts[0].provider?.id}`}
                     >
                       <Button
                         sx={{

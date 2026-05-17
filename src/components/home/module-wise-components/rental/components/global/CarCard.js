@@ -29,6 +29,7 @@ import {
   carCardReducer,
 } from "components/home/module-wise-components/rental/components/global/carCardState";
 import CustomModal from "components/modal";
+import VerifiedStoreBadge from "components/cards/VerifiedStoreBadge";
 import RentalCarQuickView from "./RentalCarQuickView";
 import { useRouter } from "next/router";
 import useTextEllipsis from "api-manage/hooks/custom-hooks/useTextEllipsis";
@@ -523,9 +524,15 @@ const CarCard = ({
                     {data?.name}
                   </Typography>
                 )}
-                <Typography sx={{ fontSize: "12px", mt: "-6px" }} component="p">
-                  {data?.provider?.name}
-                </Typography>
+                <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mt: "-6px" }}>
+                  <Typography sx={{ fontSize: "12px" }} component="p">
+                    {data?.provider?.name}
+                  </Typography>
+                  <VerifiedStoreBadge
+                    verified={data?.provider?.verified_seller ?? data?.verified_seller}
+                    fontSize="13px"
+                  />
+                </Stack>
               </Stack>
 
               <Stack gap={1} alignItems="center">

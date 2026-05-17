@@ -23,9 +23,6 @@ import { getModuleId } from "helper-functions/getModuleId";
 import { useRouter } from "next/router";
 import { t } from "i18next";
 import CustomDialogConfirm from "../custom-dialog/confirm/CustomDialogConfirm";
-import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
-import FoodDetailModal from "../food-details/foodDetail-modal/FoodDetailModal";
-import ModuleModal from "../cards/ModuleModal";
 import { addWishList, removeWishListItem } from "redux/slices/wishList";
 import { not_logged_in_message } from "utils/toasterMessages";
 import { useAddToWishlist } from "api-manage/hooks/react-query/wish-list/useAddWishList";
@@ -38,15 +35,13 @@ import { onErrorResponse } from "api-manage/api-error-response/ErrorResponses";
 import useAddCartItem from "../../api-manage/hooks/react-query/add-cart/useAddCartItem";
 import Loading from "../custom-loading/Loading";
 
-const WishListCard = ({ item }) => {
+const WishListCard = ({ item, onOpenModal }) => {
   const theme = useTheme();
   const [isWishlisted, setIsWishlisted] = useState(false);
   const reduxDispatch = useDispatch();
   const [openModal, setOpenModal] = React.useState(false);
-  const [openItemModal, setOpenItemModal] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
   const { configData } = useSelector((state) => state.configData);
-  const imageBaseUrl = configData?.base_urls?.item_image_url;
   const { cartList: aliasCartList } = useSelector((state) => state.cart);
   const cartList = getCartListModuleWise(aliasCartList);
   const { mutate: addFavoriteMutation } = useAddToWishlist();
@@ -54,9 +49,6 @@ const WishListCard = ({ item }) => {
   const { mutate } = useWishListDelete();
   const router = useRouter();
   const { mutate: addToMutate, isLoading } = useAddCartItem();
-  const handleClose = () => {
-    setOpenItemModal(false);
-  };
   const handleCloseCart = () => {
     dispatch({ type: ACTION.setOpenModal, payload: false });
   };
@@ -163,7 +155,7 @@ const WishListCard = ({ item }) => {
       }
     } else {
       if (item?.food_variations.length > 0 || item?.variations.length > 0) {
-        setOpenItemModal(true);
+        onOpenModal?.(item);
       } else {
         e.stopPropagation();
         addToCartHandler();
@@ -174,7 +166,7 @@ const WishListCard = ({ item }) => {
     if (item?.module_type === "ecommerce") {
       handleProductRedirect(item, router);
     } else {
-      setOpenItemModal(true);
+      onOpenModal?.(item);
     }
   };
 
@@ -271,28 +263,6 @@ const WishListCard = ({ item }) => {
         </Stack>
       </CustomStackFullWidth>
       <CustomDivider paddingTop="1rem" width="100%" />
-      {openItemModal && getCurrentModuleType() === "food" ? (
-        <FoodDetailModal
-          product={item}
-          imageBaseUrl={imageBaseUrl}
-          open={openItemModal}
-          handleModalClose={handleClose}
-          //setOpen={openItemModal}
-          addToWishlistHandler={addToWishlistHandler}
-          removeFromWishlistHandler={removeFromWishlistHandler}
-          isWishlisted={isWishlisted}
-        />
-      ) : (
-        <ModuleModal
-          open={openItemModal}
-          handleModalClose={handleClose}
-          configData={configData}
-          productDetailsData={item}
-          addToWishlistHandler={addToWishlistHandler}
-          removeFromWishlistHandler={removeFromWishlistHandler}
-          isWishlisted={isWishlisted}
-        />
-      )}
       <CustomDialogConfirm
         dialogTexts={t("Are you sure you want to  delete this item?")}
         open={openModal}

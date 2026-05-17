@@ -28,6 +28,7 @@ import RentalProceedtoCheckout from "../global/RentalProceedtoCheckout";
 import TripStatusDetailsSkeleton from "../global/SkeletonLoaders/TripStatusDetailsSkeleton";
 import RentalBillDetails from "../rental-checkout/RentalBillDetails";
 import RentalCancelBooking from "./RentalCancelBooking";
+import VerifiedStoreBadge from "components/cards/VerifiedStoreBadge";
 import TripDetails from "./TripDetails";
 import TripStatusActivity from "./TripStatusActivity";
 
@@ -460,26 +461,32 @@ const TripStatusPage = () => {
                                 ({tripDetails?.provider?.rating_count})
                               </Typography>
                             </Typography>
-                            <Link
-                              href={`/rental/provider/${tripDetails?.provider?.slug || tripDetails?.provider?.id}`}
-                            >
-                              <Typography
-                                sx={{
-                                  fontSize: {xs:"14px",md:"16px"},
-                                  fontWeight: {
-                                    xs:"500",
-                                    md:"700"
-                                  },
-                                  cursor:"pointer",
-                                  color: (theme) => theme.palette.primary.main,
-                                  "&:hover": {
-                                    textDecoration: "underline"
-                                  }
-                                }}
+                            <Stack direction="row" alignItems="center" spacing={0.5}>
+                              <Link
+                                href={`/rental/provider/${tripDetails?.provider?.slug || tripDetails?.provider?.id}`}
                               >
-                                {tripDetails?.provider?.name}
-                              </Typography>
-                            </Link>
+                                <Typography
+                                  sx={{
+                                    fontSize: {xs:"14px",md:"16px"},
+                                    fontWeight: {
+                                      xs:"500",
+                                      md:"700"
+                                    },
+                                    cursor:"pointer",
+                                    color: (theme) => theme.palette.primary.main,
+                                    "&:hover": {
+                                      textDecoration: "underline"
+                                    }
+                                  }}
+                                >
+                                  {tripDetails?.provider?.name}
+                                </Typography>
+                              </Link>
+                              <VerifiedStoreBadge
+                                verified={tripDetails?.provider?.verified_seller}
+                                fontSize="16px"
+                              />
+                            </Stack>
                             <Typography
                               sx={{
                                 fontSize: "16px",
