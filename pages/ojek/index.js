@@ -1,33 +1,30 @@
 import Head from "next/head";
 import Link from "next/link";
 
+const foodModule = {
+  title: "Makanan",
+  subtitle: "Pesan makanan dan minuman terdekat.",
+  href: "/home?module=5&source=o-jek",
+};
+
 const fallbackModules = [
-  {
-    title: "Makanan",
-    subtitle: "Pesan makanan dan minuman terdekat.",
-    href: "/home?source=o-jek&intent=food",
-  },
-  {
-    title: "e-Niaga",
-    subtitle: "Belanja kebutuhan harian dari toko lokal.",
-    href: "/home?source=o-jek&intent=e-niaga",
-  },
-  {
-    title: "Sembako",
-    subtitle: "Cari kebutuhan pokok untuk rumah.",
-    href: "/home?source=o-jek&intent=sembako",
-  },
-  {
-    title: "Paket",
-    subtitle: "Masuk ke layanan pengiriman SorBanNaga.",
-    href: "/parcel-delivery-info?source=o-jek",
-  },
-  {
-    title: "Rental",
-    subtitle: "Sewa kendaraan dan layanan pendukung.",
-    href: "/home?source=o-jek&intent=rental",
-  },
+  foodModule,
 ];
+
+const isFoodModule = (moduleItem) => {
+  const id = String(moduleItem?.id || moduleItem?.module_id || "");
+  const type = String(
+    moduleItem?.type || moduleItem?.module_type || ""
+  ).toLowerCase();
+  const name = String(
+    moduleItem?.module_name ||
+      moduleItem?.moduleName ||
+      moduleItem?.name ||
+      ""
+  ).toLowerCase();
+
+  return id === "5" || type === "food" || name.includes("makanan");
+};
 
 const normalizeModules = (channelData) => {
   const rawModules =
@@ -40,7 +37,10 @@ const normalizeModules = (channelData) => {
     return fallbackModules;
   }
 
-  return rawModules.slice(0, 8).map((moduleItem) => {
+  const foodModules = rawModules.filter(isFoodModule);
+  const selectedModules = foodModules.length > 0 ? foodModules : [foodModule];
+
+  return selectedModules.slice(0, 1).map((moduleItem) => {
     const title =
       moduleItem?.module_name ||
       moduleItem?.moduleName ||
@@ -50,12 +50,10 @@ const normalizeModules = (channelData) => {
 
     return {
       title,
-      subtitle:
-        moduleItem?.description ||
-        "Buka katalog dan layanan SorBanNaga.",
+      subtitle: moduleItem?.description || "Pesan makanan dan minuman terdekat.",
       href: identifier
         ? `/home?module=${encodeURIComponent(identifier)}&source=o-jek`
-        : "/home?source=o-jek",
+        : foodModule.href,
     };
   });
 };
@@ -82,10 +80,10 @@ const OjekChannelPage = ({ modules }) => {
             </div>
           </div>
           <p className="lead">
-            Pilih kebutuhan kamu dan lanjutkan di ekosistem SorBanNaga.
+            Pesan makanan dan minuman dari SorBanNaga langsung dari kanal O-JEK.
           </p>
-          <Link className="primary-action" href="/home?source=o-jek">
-            Buka Katalog
+          <Link className="primary-action" href="/home?module=5&source=o-jek">
+            Buka Makanan
           </Link>
         </section>
 
