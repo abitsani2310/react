@@ -10,6 +10,38 @@ import useGetLandingPage from "../src/api-manage/hooks/react-query/useGetLanding
 import { useGetConfigData } from "../src/api-manage/hooks/useGetConfigData";
 import { RTL } from "components/rtl";
 
+const DEFAULT_API_BASE_URL = "https://portal.sorbannaga.com";
+
+const fetchJsonSafely = async (path, language) => {
+	const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_API_BASE_URL;
+	const controller = new AbortController();
+	const timeout = setTimeout(() => controller.abort(), 10000);
+
+	try {
+		const response = await fetch(`${baseUrl}${path}`, {
+			method: "GET",
+			headers: {
+				"X-software-id": 33571750,
+				"X-server": "server",
+				"X-localization": language || "en",
+				origin: process.env.NEXT_CLIENT_HOST_URL || "https://sorbannaga.com",
+			},
+			signal: controller.signal,
+		});
+		const contentType = response.headers.get("content-type") || "";
+
+		if (!response.ok || !contentType.includes("application/json")) {
+			return null;
+		}
+
+		return await response.json();
+	} catch (error) {
+		return null;
+	} finally {
+		clearTimeout(timeout);
+	}
+};
+
 const Root = (props) => {
 	const { configData, landingPageData } = props;
 	const { data, refetch } = useGetLandingPage();
@@ -67,36 +99,16 @@ export const getServerSideProps = async (context) => {
 	const { req, res } = context;
 	const language = req.cookies.languageSetting;
 
-	const configRes = await fetch(
-		`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/config`,
-		{
-			method: "GET",
-			headers: {
-				"X-software-id": 33571750,
-				"X-server": "server",
-				"X-localization": language,
-				origin: process.env.NEXT_CLIENT_HOST_URL,
-			},
-		}
-	);
-	const config = await configRes.json();
-	const landingPageRes = await fetch(
-		`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/react-landing-page`,
-		{
-			method: "GET",
-			headers: {
-				"X-software-id": 33571750,
-				"X-server": "server",
-				"X-localization": language,
-				origin: process.env.NEXT_CLIENT_HOST_URL,
-			},
-		}
-	);
-	const landingPageData = await landingPageRes.json();
+	const [config, landingPageData] = await Promise.all([
+		fetchJsonSafely("/api/v1/config", language),
+		fetchJsonSafely("/api/v1/react-landing-page", language),
+	]);
 	// Set cache control headers for 1 hour (3600 seconds)
 	res.setHeader(
 		"Cache-Control",
-		"public, s-maxage=3600, stale-while-revalidate"
+		config && landingPageData
+			? "public, s-maxage=3600, stale-while-revalidate"
+			: "private, no-cache, no-store, max-age=0, must-revalidate"
 	);
 
 	return {

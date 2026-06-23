@@ -7,6 +7,8 @@ const foodModule = {
   href: "/home?module=5&source=o-jek",
 };
 
+const DEFAULT_API_BASE_URL = "https://portal.sorbannaga.com";
+
 const fallbackModules = [foodModule];
 
 const isFoodModule = (moduleItem) => {
@@ -253,9 +255,11 @@ const OjekChannelPage = ({ modules }) => {
 
 export async function getServerSideProps() {
   const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || "https://portal.sorbannaga.com";
+    process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_API_BASE_URL;
 
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
     const response = await fetch(
       `${baseUrl.replace(/\/$/, "")}/api/v1/ojek/channel/configuration`,
       {
@@ -264,8 +268,10 @@ export async function getServerSideProps() {
           "X-software-id": "33571750",
           "X-server": "server",
         },
+        signal: controller.signal,
       }
     );
+    clearTimeout(timeout);
 
     const contentType = response.headers.get("content-type") || "";
 

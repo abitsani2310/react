@@ -1,5 +1,6 @@
 import axios from "axios";
-export const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+export const baseUrl =
+  process.env.NEXT_PUBLIC_BASE_URL || "https://portal.sorbannaga.com";
 const MainApi = axios.create({
   baseURL: baseUrl,
 });
@@ -15,9 +16,15 @@ MainApi.interceptors.request.use(function (config) {
   if (typeof window !== "undefined") {
     zoneid = localStorage.getItem("zoneid");
     token = localStorage.getItem("token");
-    language = JSON.parse(localStorage.getItem("language-setting"));
-    currentLocation = JSON.parse(localStorage.getItem("currentLatLng"));
-    moduleid = JSON.parse(localStorage.getItem("module"))?.id;
+    try {
+      language = JSON.parse(localStorage.getItem("language-setting"));
+      currentLocation = JSON.parse(localStorage.getItem("currentLatLng"));
+      moduleid = JSON.parse(localStorage.getItem("module"))?.id;
+    } catch {
+      language = undefined;
+      currentLocation = undefined;
+      moduleid = undefined;
+    }
   }
   config.headers.latitude = currentLocation?.lat || 0
     config.headers.longitude = currentLocation?.lng || 0
