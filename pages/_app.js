@@ -17,7 +17,6 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import Router from "next/router";
 import nProgress from "nprogress";
-import { PersistLoginProvider } from "contexts/PersistLoginProvider";
 import useScrollToTop from "api-manage/hooks/custom-hooks/useScrollToTop";
 
 const clientSideEmotionCache = createEmotionCache();
@@ -51,9 +50,7 @@ const App = ({ Component, emotionCache = clientSideEmotionCache, pageProps }) =>
                     <ThemeProvider theme={theme}>
                       <RTL direction={settings?.direction}>
                         <CssBaseline />
-                        <PersistLoginProvider>
-                          {getLayout(<Component {...pageProps} />)}
-                        </PersistLoginProvider>
+                        {getLayout(<Component {...pageProps} />)}
                         <Toaster position="top-center" />
                         <ReactQueryDevtools initialIsOpen={false} />
                       </RTL>
