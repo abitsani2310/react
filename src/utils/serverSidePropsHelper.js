@@ -4,22 +4,35 @@ export const getCommonServerSideProps = async (context, pageName, pageId = null)
     const { req, res } = context;
     const language = req.cookies.languageSetting;
 
-    const configRes = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/config`,
-        {
-            method: "GET",
-            headers: {
-                "X-software-id": 33571750,
-                "X-server": "server",
-                "X-localization": language,
-                origin: process.env.NEXT_CLIENT_HOST_URL,
-            },
-        }
-    );
-    const config = await configRes.json();
+    let config = null;
 
-    const metaData = await fetchPageMetadata(pageName, pageId, language)
-    // Set cache control headers for 1 hour (3600 seconds)
+    try {
+        const configRes = await fetch(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/config`,
+            {
+                method: "GET",
+                headers: {
+                    "X-software-id": 33571750,
+                    "X-server": "server",
+                    "X-localization": language,
+                    origin: process.env.NEXT_CLIENT_HOST_URL,
+                },
+            }
+        );
+
+        if (!configRes.ok) {
+            console.error(`Config API returned ${configRes.status}: ${configRes.statusText}`);
+            return { props: { configData: null, metaData: null } };
+        }
+
+        config = await configRes.json();
+    } catch (error) {
+        console.error("Failed to fetch config:", error?.message || error);
+        return { props: { configData: null, metaData: null } };
+    }
+
+    const metaData = await fetchPageMetadata(pageName, pageId, language);
+
     res.setHeader(
         "Cache-Control",
         "public, s-maxage=3600, stale-while-revalidate"
