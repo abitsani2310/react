@@ -7,9 +7,7 @@ const foodModule = {
   href: "/home?module=5&source=o-jek",
 };
 
-const fallbackModules = [
-  foodModule,
-];
+const fallbackModules = [foodModule];
 
 const isFoodModule = (moduleItem) => {
   const id = String(moduleItem?.id || moduleItem?.module_id || "");
@@ -254,19 +252,24 @@ const OjekChannelPage = ({ modules }) => {
 };
 
 export async function getServerSideProps() {
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL || "https://portal.sorbannaga.com";
+
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
     const response = await fetch(
-      `${baseUrl}/api/v1/ojek/channel/configuration`,
+      `${baseUrl.replace(/\/$/, "")}/api/v1/ojek/channel/configuration`,
       {
         headers: {
+          Accept: "application/json",
           "X-software-id": "33571750",
           "X-server": "server",
         },
       }
     );
 
-    if (!response.ok) {
+    const contentType = response.headers.get("content-type") || "";
+
+    if (!response.ok || !contentType.includes("application/json")) {
       return { props: { modules: fallbackModules } };
     }
 
